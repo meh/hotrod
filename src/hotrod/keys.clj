@@ -4,11 +4,13 @@
 (defrecord Key
   [name ctrl shift alt win through?])
 
-(defn ^:private first-char ([string] (first-char string 0))
+(defn ^:private first-char
+  ([string] (first-char string 0))
   ([string position] (when (< position (count string))
                        [(nth string position) [string position]])))
 
-(defn ^:private next-char [[_ [string position]]]
+(defn ^:private next-char
+  [[_ [string position]]]
   (when (< position (count string))
     (let [position (inc position)]
       [(nth string position) [string position]])))
