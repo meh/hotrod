@@ -5,9 +5,11 @@
   [name ctrl shift alt win through?])
 
 (defn ^:private first-char
-  ([string] (first-char string 0))
-  ([string position] (when (< position (count string))
-                       [(nth string position) [string position]])))
+  ([string]
+   (first-char string 0))
+  ([string position]
+   (when (< position (count string))
+     [(nth string position) [string position]])))
 
 (defn ^:private next-char
   [[_ [string position]]]
