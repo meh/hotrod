@@ -62,6 +62,7 @@
 
 (defn parse-keys [string]
   (loop [current (parse-key string 0), result []]
-    (if-not current result
+    (if-not current
+      result
       (let [[key position] current]
         (recur (parse-key string position) (conj result key))))))
