@@ -15,23 +15,23 @@
 
 (defn ^:private expand-key [name]
   (case-insensitive name
-    ("Space")           :space
+    "Space"             :space
     ("Enter" "Return")  :enter
     ("Esc" "Escape")    :esc
     ("Backspace" "BS")  :backspace
     ("Delete" "Del")    :delete
     ("Insert" "Ins")    :insert
-    ("Home")            :home
-    ("End")             :end
+    "Home"              :home
+    "End"               :end
     ("PageUp" "PgUp")   :page-up
     ("PageDown" "PgDn") :page-down
-    ("Up")              :up
-    ("Down")            :down
-    ("Left")            :left
-    ("Right")           :right
-    ("ScrollLock")      :scroll-lock
-    ("CapsLock")        :caps-lock
-    ("NumLock")         :num-lock
+    "Up"                :up
+    "Down"              :down
+    "Left"              :left
+    "Right"             :right
+    "ScrollLock"        :scroll-lock
+    "CapsLock"          :caps-lock
+    "NumLock"           :num-lock
 
     (throw (IllegalArgumentException. (str name " is an unknown key")))))
 
