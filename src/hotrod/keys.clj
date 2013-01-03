@@ -12,7 +12,7 @@
      [(nth string position) [string position]])))
 
 (defn ^:private next-char
-  [[_ [string position]]]
+  [[string position]]
   (when (< position (count string))
     (let [position (inc position)]
       [(nth string position) [string position]])))
@@ -40,31 +40,28 @@
     (throw (IllegalArgumentException. (str name " is an unknown key")))))
 
 (defn ^:private parse-key [string position]
-  (loop [current (first-char string position), result (map->Key {}), side true]
-    (when current
-      (let [[ch [_ position]] current]
-        (case ch
-          \< (recur (next-char current) result :left)
-          \> (recur (next-char current) result :right)
-          \~ (recur (next-char current) (assoc result :through? true) true)
+  (loop [[ch [_ position :as current]] (first-char string position), result (map->Key {}), side true]
+    (when ch
+      (case ch
+        \< (recur (next-char current) result :left)
+        \> (recur (next-char current) result :right)
+        \~ (recur (next-char current) (assoc result :through? true) true)
 
-          \^ (recur (next-char current) (assoc result :ctrl side) true)
-          \+ (recur (next-char current) (assoc result :shift side) true)
-          \! (recur (next-char current) (assoc result :alt side) true)
-          \# (recur (next-char current) (assoc result :win side) true)
+        \^ (recur (next-char current) (assoc result :ctrl side) true)
+        \+ (recur (next-char current) (assoc result :shift side) true)
+        \! (recur (next-char current) (assoc result :alt side) true)
+        \# (recur (next-char current) (assoc result :win side) true)
 
-          \{ (loop [current (next-char current), name ""]
-               (when current
-                 (let [[ch [_ position]] current]
-                   (if (= ch \})
-                     [(assoc result :name (expand-key name)) (inc position)]
-                     (recur (next-char current) (str name ch))))))
+        \{ (loop [[ch [_ position :as current]] (next-char current), name nil]
+             (when ch
+               (if (= ch \})
+                 [(assoc result :name (expand-key name)) (inc position)]
+                 (recur (next-char current) (str name ch)))))
 
-          [(assoc result :name (keyword (str ch))) (inc position)])))))
+        [(assoc result :name (keyword (str ch))) (inc position)]))))
 
 (defn parse-keys [string]
-  (loop [current (parse-key string 0), result []]
+  (loop [[key position :as current] (parse-key string 0), result []]
     (if-not current
       result
-      (let [[key position] current]
-        (recur (parse-key string position) (conj result key))))))
+      (recur (parse-key string position) (conj result key)))))
